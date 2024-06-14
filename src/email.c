@@ -62,3 +62,20 @@ void insert_emails_to_Email(struct Email *letter, char **emails,
     break;
   }
 }
+
+void print_missing_options(int present_options) {
+  printf("The following required options were missing:\n");
+  if ((present_options & TOO_FLAG) != TOO_FLAG) {
+    printf("\tA valid recipient (too, set with -t or --too)\n");
+  }
+  if ((present_options & FROM_FLAG) != FROM_FLAG) {
+    printf("\tA valid sending email (from, set with --from)\n");
+  }
+  if ((present_options & SUBJECT_FLAG) != SUBJECT_FLAG) {
+    printf("\tA valid subject (subject, set with -s or --subject)\n");
+  }
+  if ((present_options & MESSAGE_FLAG) != MESSAGE_FLAG) {
+    printf("\tA valid message body (message, set with -m or --M)\n");
+  }
+  printf("For usage instructions call the program again with --help\n");
+}

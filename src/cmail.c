@@ -2,12 +2,13 @@
 #include <curl/curl.h>
 #include <getopt.h>
 #include <limits.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* required arguments are tracked by flags */
-int usage_flag = 0;
+/* corresponds to: from to subject message cc bcc */
+int options_bitmask = 0b0;
 
 /* use an enum for long options with no corresponding short option */
 enum {
@@ -19,7 +20,7 @@ enum {
 static char const short_options[] = "01:2:t:s:m:M:";
 
 static struct option longopts[] = {
-    {"help", no_argument, &usage_flag, 1},
+    {"help", no_argument, NULL, 1},
     {"from", required_argument, NULL, FROM_OPTION},
     {"too", required_argument, NULL, 't'},
     {"subject", required_argument, NULL, 's'},
@@ -31,6 +32,7 @@ static struct option longopts[] = {
 
 /* print usage information */
 void usage();
+
 void usage() {
   printf("Usage: cmail [OPTIONS]...\n");
   printf("Send simple emails from your cli!\n");
@@ -71,30 +73,37 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
       }
       memcpy(letter->from, optarg, len + 1);
+      options_bitmask |= FROM_FLAG;
       break;
     case 't':
       num_emails = parse_delimited(optarg, emails);
       letter->size_too = num_emails;
       insert_emails_to_Email(letter, emails, TO);
+      options_bitmask |= TOO_FLAG;
       break;
     case 's':
       printf("subject: %s\n", optarg);
+      options_bitmask |= SUBJECT_FLAG;
       break;
     case CC_OPTION:
       num_emails = parse_delimited(optarg, emails);
       letter->size_cc = num_emails;
       insert_emails_to_Email(letter, emails, CC);
+      options_bitmask |= CC_FLAG;
       break;
     case BCC_OPTION:
       num_emails = parse_delimited(optarg, emails);
       letter->size_bcc = num_emails;
       insert_emails_to_Email(letter, emails, BCC);
+      options_bitmask |= BCC_FLAG;
       break;
     case 'm':
       printf("message: %s\n", optarg);
+      options_bitmask |= MESSAGE_FLAG;
       break;
     case 'M':
       printf("path to message: %s\n", optarg);
+      options_bitmask |= MESSAGE_FLAG;
       break;
     case '?':
       usage();
@@ -107,8 +116,9 @@ int main(int argc, char *argv[]) {
     };
   }
 
-  if (usage_flag) {
-    usage();
+  if ((options_bitmask & REQUIRED_BITMASK) != REQUIRED_BITMASK) {
+    print_missing_options(options_bitmask);
+    exit(EXIT_FAILURE);
   }
 
   return 0;
