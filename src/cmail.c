@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 /* corresponds to: from to subject message cc bcc */
 int options_bitmask = 0b0;
@@ -32,6 +33,15 @@ static struct option longopts[] = {
 
 /* print usage information */
 void usage();
+void save_text_field(int len, char *optarg, char **dest);
+
+void save_text_field(int len, char *optarg, char **dest) {
+  if ((*dest = malloc(len + 1)) == NULL) {
+    perror("error allocating space for message");
+    exit(EXIT_FAILURE);
+  }
+  memcpy(*dest, optarg, len + 1);
+}
 
 void usage() {
   printf("Usage: cmail [OPTIONS]...\n");
@@ -82,7 +92,8 @@ int main(int argc, char *argv[]) {
       options_bitmask |= TOO_FLAG;
       break;
     case 's':
-      printf("subject: %s\n", optarg);
+      len = strlen(optarg);
+      save_text_field(len, optarg, &letter->subject);
       options_bitmask |= SUBJECT_FLAG;
       break;
     case CC_OPTION:
@@ -98,7 +109,8 @@ int main(int argc, char *argv[]) {
       options_bitmask |= BCC_FLAG;
       break;
     case 'm':
-      printf("message: %s\n", optarg);
+      len = strlen(optarg);
+      save_text_field(len, optarg, &letter->message);
       options_bitmask |= MESSAGE_FLAG;
       break;
     case 'M':
@@ -120,6 +132,7 @@ int main(int argc, char *argv[]) {
     print_missing_options(options_bitmask);
     exit(EXIT_FAILURE);
   }
+  printf("%s\n", letter->subject);
 
   return 0;
 }

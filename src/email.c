@@ -1,6 +1,7 @@
 #include "email.h"
 #include <curl/curl.h>
 #include <regex.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -71,11 +72,15 @@ void print_missing_options(int present_options) {
   if ((present_options & FROM_FLAG) != FROM_FLAG) {
     printf("\tA valid sending email (from, set with --from)\n");
   }
-  if ((present_options & SUBJECT_FLAG) != SUBJECT_FLAG) {
-    printf("\tA valid subject (subject, set with -s or --subject)\n");
-  }
   if ((present_options & MESSAGE_FLAG) != MESSAGE_FLAG) {
     printf("\tA valid message body (message, set with -m or --M)\n");
   }
   printf("For usage instructions call the program again with --help\n");
 }
+
+void upload_message_from_file(char *filePath, struct Email *letter) {
+  FILE *fp;
+  fp = fopen(filePath, "r");
+}
+
+void generate_email(struct Email *letter, char *message_buffer) {}

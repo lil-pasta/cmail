@@ -9,7 +9,7 @@
 #define BCC_FLAG (1 << 2)
 
 /* required arguments are represented here */
-#define REQUIRED_BITMASK (15 << 4)
+#define REQUIRED_BITMASK (13 << 4)
 
 enum Too {
   TO = 1,
@@ -35,5 +35,7 @@ int parse_delimited(char email[],
                     char *sorted_emails[]); /* parse comma separated list */
 void insert_emails_to_Email(struct Email *letter, char **emails,
                             int email_type);
-void generate_email(struct Email *letter, char *letter_buffer);
+void generate_email(struct Email *letter, char *message_buffer);
 void print_missing_options(int present_options);
+void upload_message_from_file(char *filePath, struct Email *letter);
+int validate_message(struct Email *letter); /* validate generated message */
