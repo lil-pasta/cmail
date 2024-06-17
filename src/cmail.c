@@ -115,6 +115,7 @@ int main(int argc, char *argv[]) {
       break;
     case 'M':
       printf("path to message: %s\n", optarg);
+      upload_message_from_file(optarg, letter);
       options_bitmask |= MESSAGE_FLAG;
       break;
     case '?':
@@ -133,6 +134,7 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
   printf("%s\n", letter->subject);
+  printf("%s\n", letter->message);
 
   return 0;
 }

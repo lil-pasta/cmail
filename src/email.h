@@ -9,7 +9,7 @@
 #define BCC_FLAG (1 << 2)
 
 /* required arguments are represented here */
-#define REQUIRED_BITMASK (13 << 4)
+#define REQUIRED_BITMASK (12 << 4)
 
 enum Too {
   TO = 1,
